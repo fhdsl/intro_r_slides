@@ -2,6 +2,7 @@
 title: "W2: Working with data structures"
 format: 
   revealjs:
+    df-print: paged
     smaller: true
     scrollable: true
     echo: true
@@ -9,16 +10,72 @@ format:
     drop:
       engine: webr
       button: true
+    footer: <https://bit.ly/ir-w2>
 revealjs-plugins:
   - drop
 output-location: fragment
 ---
 
-## Data types
+## W1: Clearest Points / Positives
+
+> The responses to all the questions is fantastic. I really feel like I can ask anything which is so helpful!
+
+> Having someone in the chat helping those who are remote and the instructor is comforting 
+
+> In general, coding is new to me (I work with data entry, so I do know the relevance), but I learned more details of how it a code is a language to the computer and will output information/answers. 
+
+> Understanding how R/R Studio/Posit imports data, and runs from the console. 
+
+Be patient. It takes some time getting used to R coming from elsewhere. 
+
+## Clearest Points
+
+> That in R you can use the equal sign to assign variables instead of the arrow
+
+Yup, this ultimately is a matter of style. If you're coming to R from another language, I encourage you to continue to use the `=` sign. Just know that `<-` is pretty common among R users.
+
+## Muddy Points
+
+> I feel like I don't know what is unclear just yet as I am still very new to this concept. 
+
+> I'm a very beginner, most stuff was unclear so I need time to practice.
+
+> My brain wants to know what every line of code is doing, otherwise I get hung up on trying to figure it out and can't process what's happening next.  R feels like a very unintuitive language to me after using SAS for many years.
+
+> Still not super clear how Quarto works.
+
+Great point, it's hard to know what you need to know when you've encountered something brand new. Be patient and curious, and please reach out when you need help.
+
+## Muddy Points
+
+> The layout of Posit Cloud was a little confusing. The more we used it, the more I understood it, but it would have helped to have a little bit more of a tour of what all the windows are from the beginning.
+
+If you haven't already, I have recorded a video here that is a guided tour of the RStudio interface:
+
+<https://www.youtube.com/watch?v=oFmjHxl28H0>
+
+> When to type into the console (bottom left) vs the source .qmd files (top left)
+
+In general, you want to save your work, so I usually write my code in code chunks in a `.qmd` (Quarto Markdown file). 
+
+# Ask Questions on Slido: <https://bit.ly/ir-w2>
+
+# Review of Exercise 1
+
+## Last week: Data types
 
 -   **Numeric**: 18, -21, 65, 1.25
 -   **Character**: "ATCG", "Whatever", "948-293-0000"
 -   **Logical**: TRUE, FALSE
+
+## Learning Objectives for Today
+
+By the end of today, you should be able to:
+
+- **Explain** how to construct vectors
+- **Utilize** *explicit* and *implicit* subsetting on vectors
+- **Define** what a data frame is and how it is related to vectors
+- **Apply** *implicit* subsetting to data.frames
 
 ## Data structures
 
@@ -36,15 +93,28 @@ So, you can have **numeric vector**, **character vector**, and **logical vector*
 There is no limit on how big a vector can be, as long the memory use of it is within the computer's memory (RAM).
 
 We can now store a vast amount of information in a vector, and assign it to a single variable. We can now use operations and functions on a vector, modifying many elements within the vector at once!
+
+There are also approaches that let you work with data that is larger than your memory. 
 :::
 
 ## Defining a vector
 
+We use `c()` - the *combine* function to declare a vector
+
 . . .
 
 ```{r}
-staff = c("chris", "shasta", "jeff")
+staff = c("chris", "ted", "jeff")
 chrNum = c(2, 3, 1)
+```
+
+. . .
+
+What happens when you mix data types in a vector? One of the [data types is *coerced* to the other data type](https://www.oreilly.com/library/view/r-in-a/9781449358204/ch05s08.html).
+
+```{r}
+new_vector = c("chris", 1, 2)
+new_vector
 ```
 
 ## Using operations on vectors
@@ -56,13 +126,16 @@ You can use operations and functions on vectors.
 . . .
 
 ```{r}
-chrNum = chrNum * 3
-chrNum 
+chrNum = c(2, 3, 1)
+chrNum3 = chrNum * 3
+chrNum3 
 ```
 
 . . .
 
 Multiplication has a new meaning when used on a numeric vector and numeric data type! This is called **operator overloading**.
+
+A lot of operations/functions in R are *vectorized* - you can apply a function to a single value or a whole vector. This will become very important later on.
 
 . . .
 
@@ -146,7 +219,7 @@ small_staff = staff[c(TRUE, TRUE, FALSE)]
 small_staff
 ```
 
-## Explicit vs. implicit subsetting
+## Explicit subsetting
 
 . . .
 
@@ -172,9 +245,17 @@ age[c(TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE)]
 
 . . .
 
--   **Implicit subsetting**: Given a length 10 vector of people's ages, and subset to elements greater than age 50.
+## Quick note about sequences
 
-## Implicit subsetting
+You can also declare a vector sequence using the `:` operator:
+
+```{r}
+1:5
+```
+
+## Implicit Subsetting
+
+-   **Implicit subsetting**: Given a length 10 vector of people's ages, and subset to elements greater than age 50.
 
 We don't know which elements to subset off the top of our head! If we know which elements are \> 50, then we can give the elements for an explicit subset.
 
@@ -198,7 +279,7 @@ Can you guess what we do next?
 age[age > 50]
 ```
 
-## Implicit subsetting
+## Implicit subsetting steps
 
 Subset a vector **implicitly**, in 3 steps:
 
@@ -261,20 +342,40 @@ staff != "chris"
 staff[staff != "chris"]
 ```
 
-## Dataframes
+# Ask Me Two Questions
+
+<https://bit.ly/ir-w2>
+
+## `data.frame`s
 
 . . .
 
-A **dataframe** is a spreadsheet such that each column must have the same data type; a bunch of vectors organized as columns.
+A `data.frame` is a table such that 
+
+- each column is a vector
+- each column has a data type
+- order matters
+
+This is the data structure that we will be working with for the rest of class.
 
 . . .
 
 ```{r}
 load(url("https://github.com/fhdsl/Intro_to_R/raw/main/classroom_data/CCLE.RData"))
+head(metadata)
+```
+
+## `data.frame` Properties
+
+Rows:
+
+```{r}
 nrow(metadata)
 ```
 
 . . .
+
+Columns:
 
 ```{r}
 ncol(metadata)
@@ -282,41 +383,47 @@ ncol(metadata)
 
 . . .
 
+Dimension (rows x columns)
+
 ```{r}
 dim(metadata)
 ```
 
 . . .
 
+## Useful Tools for Peeking at `data.frame`s
+
 `head(metadata)`
 
 `View(metadata)`
 
-## Column names of dataframes
+## Column names of `data.frame`s
 
-The **column name** is a character vector that corresponds to the columns of the dataframe.
-
-. . .
-
-```{r}
-names(metadata)
-```
-
-. . .
-
-## Subsetting a column from a dataframe
-
-. . .
-
-The `dataframe$column_name` operation selects for a column by its column name and returns the column as a vector:
+The **column name** is a character vector that corresponds to the columns of the `data.frame`.
 
 . . .
 
 ```{r}
-metadata$OncotreeLineage[1:5]
+colnames(metadata)
 ```
 
 . . .
+
+## Subsetting a column from a `data.frame`
+
+. . .
+
+The `dataframe$<column_name>` operation selects for a column by its column name and returns the column as a vector:
+
+. . .
+
+```{r}
+metadata$OncotreeLineage
+```
+
+. . .
+
+## Subsetting a column from a `data.frame`
 
 ```{r}
 metadata$Age[1:5]
@@ -330,9 +437,9 @@ Challenge!
 metadata$Age[metadata$OncotreeLineage == "Myeloid"]
 ```
 
-## Subsetting columns and rows from a dataframe
+## Subsetting columns and rows from a `data.frame`
 
-`dataframe[row_idx, col_idx]` subsets the dataframe by a row indexing vector `row_idx`, and a column indexing vector `col_idx`.
+`dataframe[row_idx, col_idx]` subsets the `data.frame` by a row indexing vector `row_idx`, and a column indexing vector `col_idx`.
 
 . . .
 
@@ -340,7 +447,7 @@ metadata$Age[metadata$OncotreeLineage == "Myeloid"]
 metadata[1:5, c(1, 3)]
 ```
 
-. . .
+## Subsetting `data.frame`s
 
 We can refer to the column names directly:
 
@@ -348,7 +455,7 @@ We can refer to the column names directly:
 metadata[1:5, c("ModelID", "CellLineName")]
 ```
 
-## Subsetting columns and rows from a dataframe
+## Subsetting columns or rows from a `data.frame`
 
 We can leave the column index or row index empty to just subset columns or rows.
 
@@ -358,8 +465,23 @@ We can leave the column index or row index empty to just subset columns or rows.
 metadata[1:5, ]
 ```
 
+## Subsetting Columns or Rows
+
 . . .
 
 ```{r}
 metadata[, c("ModelID", "CellLineName")]
 ```
+
+## The crucial bit:
+
+```{r}
+metadata[metadata$OncotreeLineage == "Myeloid",]
+```
+
+# Ask me two questions on Slido
+<https://bit.ly/ir-w2>
+
+## Week 2 Check-in
+
+<https://docs.google.com/forms/d/e/1FAIpQLScByNkcK4xMVosHkIxSXBTrzvSpUqUx01I-_ICvjs3NgZcePg/viewform?usp=sf_link>

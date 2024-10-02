@@ -99,7 +99,7 @@ We ask you to follow [Participation Guidelines](https://hutchdatascience.org/com
 
 # Quick Look at the Website
 
-<https://hutchdatascience.com/Intro_to_R>
+<https://hutchdatascience.org/Intro_to_R>
 
 
 ## Content of the course (by week, roughly)
