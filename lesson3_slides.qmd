@@ -2,6 +2,7 @@
 title: "W3: Data Visualization"
 format: 
   revealjs:
+    incremental: true
     smaller: true
     scrollable: true
     echo: true
@@ -12,9 +13,102 @@ format:
       webr:
         - palmerpenguins
         - ggplot2
+    footer: <https://bit.ly/ir-w3>
 revealjs-plugins:
   - drop
 ---
+
+## Announcements
+
+- [Data Snacks](https://hutchdatascience.com/data_snacks)
+  - Tips and Tricks with R and Python
+  - Interactive Tutorials
+- Commnunity Session time: 12-1:30 PM Wednesday
+  - [Compile a list of topics you want to see for Community Session](https://docs.google.com/document/d/1ZFamnJqGL5jmxya7KiEvM-CDf8Rr9_7rJH1gek5i0NI/edit?usp=sharing)
+  - Invite Others (all are welcome): <https://www.addevent.com/event/Dl23075333>
+
+# Slido Link: <https://bit.ly/ir-w3>
+
+# Last Week Today
+(Sorry, John Oliver)
+
+## Clear Points
+
+> implicit subsetting
+
+Glad it was clear!
+
+. . .
+
+> today was pretty clear, i need to figure out the syntax for diving into specific parts of data frames but I think I need to just play with this.
+
+Keep at it!
+
+## Clear Points
+
+> How to make a vector, how to select values out from the vector, how to select values from a data frame, ... lots of things!
+
+. . .
+
+> how to use vectors, what they are used for, and how to start thinking about manipulating data frames
+
+Yay!
+
+## Muddy Points
+
+> implicit subsetting
+
+We will revisit this when we get to data wrangling in a couple weeks. Let it sit and we'll revisit it.
+
+## Muddy Points
+
+> Can vectors be thought of as data columns or are they sometimes rows or neither?
+
+In R, the columns of a `data.frame` are vectors. These three things are equivalent:
+
+  - Column
+  - Variable
+  - Vector
+
+. . .
+  
+In general, rows are not vectors in a `data.frame`. This is because you can have mixed data types across a row.
+
+## Muddy Points
+
+> When to use $
+
+We use `$` to refer to a column within a `data.frame`. We mostly do it when we need to implicitly subset based on a criteria of that column. One of the joys of the `tidyverse` is that you don't have to use it.  
+
+. . . 
+
+## Muddy Points
+
+> Nothing muddy but i think since vectors are such a crucial concept to learn - live coding with a simpler data set would be easier. Sometimes the medical data can go over my head. [...]
+
+. . .
+
+> Some of the in class exercises were difficult to follow because we could not see the initial vector definition before each operation was applied to it. This made it hard for me to understand [...]
+
+Thanks for the feedback. There is a preview of the data we're using today in a slide.
+
+I have used toy datasets before.
+
+## Muddy Points
+
+> Not necessarily unclear, but it would be helpful to do a quick rundown of any tips to remember the ordering for how to recall information and also the ordering of arguments for other functions.
+
+For the most part, we've been using the order to distinguish our arguments from each other. You can mix the order up by using the argument names. These are all equivalent:
+
+. . .
+
+```r
+seq(1,10,2)
+seq(from=1, to=10, by=2)
+seq(by=2, from=1, to=10)
+```
+
+When working with functions, auto-completion is your friend. Try using the <Tab> key when you start working with a function. 
 
 ## Data Visualization
 
@@ -25,27 +119,60 @@ library(tidyverse)
 library(palmerpenguins)
 ```
 
-## Reminder: Penguins
+## Penguins Dataset 
 
 ```{r}
 gt::gt(head(penguins))
 ```
 
-- `bill_depth_mm` : `numeric`
-- `bill_length_mm` : `numeric`
-- `species` : `character`
+- Note that our dataset has column names
+- In `ggplot2`, we don't need to use the `$` operator: `penguins$species`
+- We use the bare column name to refer to it: `species`
+  - `bill_depth_mm` : `numeric`
+  - `bill_length_mm` : `numeric`
+  - `species` : `character`
+
+## `{visdat}` for Exploratory Data Analysis
+
+::::{.columns}
+:::{.column width="30%"}
+```{r}
+#| eval: false
+library(visdat)
+vis_dat(penguins)
+```
+
+
+:::
+:::{.column width="70%"}
+```{r}
+#| echo: false
+library(visdat)
+vis_dat(penguins)
+```
+:::
+::::
+
 
 ## Common Plots
 
+::::{.columns}
+:::{.column width="35%"}
 ### One Variable
 
 -   Numeric: histogram
 -   Character: bar plots
-
+:::
+:::{.column width="65%"}
 ### Two Variables
 
 -   Numeric vs. Numeric: Scatterplot, line plot
 -   Numeric vs. Character: Box plot
+:::
+::::
+
+
+
 
 ## Why focus on these plots?
 
@@ -69,6 +196,8 @@ gt::gt(head(penguins))
 
 Think about making plots like using recipes from a cookbook: https://r-graphics.org/
 
+# One variable plots
+
 ## Building a Histogram
 
 ::::{.columns}
@@ -89,86 +218,320 @@ Think about making plots like using recipes from a cookbook: https://r-graphics.
 ::::
 
 
-## Taking it one part at a time (Data) {auto-animate=true}
+## `ggplot(penguins)`
 
+::::{.columns}
+:::{.column width="35%"}
+[ggplot(penguins)]{style="color:orange"} + 
+:::
+:::{.column width="65%"}
+- We always start with `ggplot()`
+- The first argument to `ggplot()` is the data
+- We add details to the plot with the `+` (plus sign)
+:::
+::::
+
+
+## `aes()`:
+
+::::{.columns}
+:::{.column width="35%"}
+[aes(x = bill_length_mm)]{style="color:green"} + 
+:::
+:::{.column width="65%"}
+- We map data in with the `aes()` (aesthetic) function
+- `x` is an *aesthetic* - it maps data to a visual property
+- In the `aes()` function, we use bare column names: `bill_depth_mm`
+- If you want to know what aesthetics to map, look at the geom documentation:
+  - [`?geom_histogram()`](https://ggplot2.tidyverse.org/reference/geom_point.html)
+:::
+::::
+
+## Some aesthetic properties
+
+|Aesthetic|Description|
+|---------|-----------|
+|`x`| x-coordinate on graph|
+|`y`| y-coordinate on graph|
+|`color`|color of point or line|
+|`alpha`|transparency|
+|`size`|size of point or thickness of line|
+|`group`|group that data belongs to|
+
+Not all `geom_`s support every aesthetic properties
+
+  
+## `geom_histogram()`
+
+::::{.columns}
+:::{.column width="35%"}
+[geom_histogram()]{style="color:blue"}
+:::
+:::{.column width="65%"}
+- All geometries begin with `geom_`
+- `geom_`s require specific aesthetics
+- Tells ggplot2 how to arrange data on page
+- When in doubt, look at the documentation:
+    - `?geom_histogram`
+:::
+::::
+
+## Taking it one part at a time {auto-animate=true}
+
+::::{.columns}
+:::{.column width="35%"}
 ```{r}
+#| eval: false
 ggplot(penguins)
 ```
 
-## Taking it one part at a time (Aesthetics){auto-animate=true}
-
+:::
+:::{.column width="65%"}
 ```{r}
+#| echo: false
+ggplot(penguins)
+```
+:::
+::::
+
+
+## Taking it one part at a time {auto-animate=true}
+
+::::{.columns}
+:::{.column width="35%"}
+```{r}
+#| eval: false
 ggplot(penguins) +
   aes(x = bill_length_mm)
 ```
 
-## Taking it one part at a time (Geometry){auto-animate=true}
-
+:::
+:::{.column width="65%"}
 ```{r}
+#| echo: false
+ggplot(penguins) +
+  aes(x = bill_length_mm)
+```
+
+:::
+::::
+
+
+## Taking it one part at a time {auto-animate=true}
+
+::::{.columns}
+:::{.column width="35%"}
+```{r}
+#| eval: false
 ggplot(penguins) +
   aes(x = bill_length_mm) +
   geom_histogram()
 ```
 
-## Histogram
+:::
+:::{.column width="65%"}
+```{r}
+#| echo: false
+ggplot(penguins) +
+  aes(x = bill_length_mm) +
+  geom_histogram()
+```
 
-[ggplot(penguins)]{style="color:orange"} + [aes(x = bill_length_mm)]{style="color:green"} + [geom_histogram()]{style="color:blue"}
+:::
+::::
 
+
+
+## Histogram recap
+
+::::{.columns}
+:::{.column width="35%"}
+[ggplot(penguins)]{style="color:orange"} + 
+
+[aes(x = bill_length_mm)]{style="color:green"} + 
+
+[geom_histogram()]{style="color:blue"}
+
+:::
+:::{.column width="65%"}
 ```{r, echo=F, warning=F, message=F}
 ggplot(penguins) + 
   aes(x = bill_length_mm) + 
   geom_histogram()
 ```
 
+:::
+::::
+
+## Bar plots
+
+Made for categorical data. Bar plots automatically count each group for you, so you only need to provide one variable (axis).
+
+::::{.columns}
+:::{.column width="35%"}
+[ggplot(penguins)]{style="color:orange"} + 
+
+[aes(x = species)]{style="color:green"} + 
+
+[geom_bar()]{style="color:blue"}
+:::
+:::{.column width="65%"}
+```{r, echo=F, warning=F, message=F}
+ggplot(penguins) + aes(x = species) + geom_bar()
+```
+
+:::
+::::
+
+
+# Two Variable Plots
+
+
 ## Scatterplot
 
+::::{.columns}
+:::{.column width="35%"}
 [ggplot(penguins)]{style="color:orange"} + 
   
   [aes(x = bill_length_mm, y = bill_depth_mm)]{style="color:green"} + 
   
   [geom_point()]{style="color:blue"}
-
+:::
+:::{.column width="65%"}
 ```{r, echo=F, warning=F, message=F}
 ggplot(penguins) + 
   aes(x = bill_length_mm, y = bill_depth_mm) + 
   geom_point()
 ```
+:::
+::::
+
 
 ## Scatterplot (data) {auto-animate=true}
 
+::::{.columns}
+:::{.column width="35%"}
 ```{r}
+#| eval: false
+ggplot(penguins)
+```
+:::
+:::{.column width="65%"}
+```{r}
+#| echo: false
 ggplot(penguins)
 ```
 
+:::
+::::
+
+
+
 ## Scatterplot (aesthetics) {auto-animate=true}
 
+::::{.columns}
+:::{.column width="35%"}
 ```{r}
+#| eval: false
 ggplot(penguins) +
-  aes(x = bill_length_mm, y=bill_depth_mm) 
+  aes(x = bill_length_mm, 
+      y=bill_depth_mm) 
+```
+
+:::
+:::{.column width="65%"}
+```{r}
+#| echo: false
+ggplot(penguins) +
+  aes(x = bill_length_mm, 
+      y=bill_depth_mm) 
   
 ```
 
+:::
+::::
+
+
+
 ## Scatterplot (geometry) {auto-animate=true}
 
+::::{.columns}
+:::{.column width="35%"}
 ```{r}
+#| eval: false
+ggplot(penguins) +
+  aes(x = bill_length_mm, 
+      y=bill_depth_mm) +
+  geom_point()
+  
+```
+
+:::
+:::{.column width="65%"}
+```{r}
+#| echo: false
 ggplot(penguins) +
   aes(x = bill_length_mm, y=bill_depth_mm) +
   geom_point()
   
 ```
 
+:::
+::::
+
+
+
+## Note: Where to put `aes()`
+
+Our code looks like this:
+
+```r
+ggplot(penguins) +
+  aes(x = bill_length_mm, y=bill_depth_mm) +
+  geom_point()
+```
+
+Most ggplot code looks like this:
+
+```r
+ggplot(penguins, mapping = aes(x = bill_length_mm, y=bill_depth_mm)) +
+  geom_point()
+```
+Either is acceptable!
+
+## Boxplot
+
+::::{.columns}
+:::{.column width="35%"}
+[ggplot(penguins)]{style="color:orange"} + 
+
+[aes(x = species, y = bill_depth_mm)]{style="color:green"} + 
+
+[geom_boxplot()]{style="color:blue"}
+
+:::
+:::{.column width="65%}
+```{r, echo=F, warning=F, message=F}
+ggplot(penguins) + aes(x = species, y = bill_depth_mm) + geom_boxplot()
+```
+
+:::
+::::
+
+
 # What about more than two variables?
 
 ## Three Variables
 
-- `x=bill_length_mm`
-- `y=bill_depth_mm`
-- `color=species`
-
+::::{.columns}
+:::{.column width="35%"}
 [ggplot(penguins)]{style="color:orange"} + 
-[aes(x = bill_length_mm, y = bill_depth_mm, color = species)]{style="color:green"} +
-[geom_point()]{style="color:blue"}
 
+[aes(x = bill_length_mm, y = bill_depth_mm, color = species)]{style="color:green"} +
+
+[geom_point()]{style="color:blue"}
+:::
+:::{.column width="65%"}
 ```{r, echo=F, warning=F, message=F}
 ggplot(penguins) + 
   aes(x = bill_length_mm, 
@@ -176,10 +539,85 @@ ggplot(penguins) +
       color = species) + 
   geom_point()
 ```
+:::
+::::
 
-## Multivaraite Scatterplot by facet
 
-[ggplot(penguins)]{style="color:orange"} + [aes(x = bill_length_mm, y = bill_depth_mm)]{style="color:green"} + [geom_point()]{style="color:blue"} + [facet_wrap(\~species)]{style="color:purple"}
+
+# Additions to Basic Plots
+
+
+## And the Rest
+
+[Data]{style="color:orange"} +
+
+[Mapping to data]{style="color:green"} +
+
+[Geometry]{style="color:blue"} +
+
+[Layout Options]{style="color:purple"}
+
+## Histogram with a plot theme
+
+::::{.columns}
+:::{.column width="35%"}
+[ggplot(penguins)]{style="color:orange"} + 
+
+[aes(x = bill_length_mm)]{style="color:green"} + 
+
+[geom_histogram()]{style="color:blue"} + 
+
+[theme_bw()]{style="color:purple"}
+:::
+:::{.column width="65%"}
+```{r, echo=F, warning=F, message=F}
+ggplot(penguins) + aes(x = bill_length_mm) + geom_histogram() + theme_bw()
+```
+:::
+::::
+
+## Histogram with options
+
+::::{.columns}
+:::{.column width="35%"}
+[ggplot(penguins)]{style="color:orange"} + 
+
+[aes(x = bill_length_mm)]{style="color:green"} + 
+
+[geom_histogram(bins = 10)]{style="color:blue"}
+:::
+
+:::{.column width="65%"}
+```{r, echo=F, warning=F, message=F}
+ggplot(penguins) + aes(x = bill_length_mm) + geom_histogram(bins = 10) 
+```
+:::
+::::
+
+
+## Faceting
+
+Stratify our plot based on another categorical variable
+
+[ggplot(penguins)]{style="color:orange"} + 
+
+[aes(x = species, y = bill_depth_mm, color = species)]{style="color:green"} + 
+
+[geom_boxplot()]{style="color:blue"} +
+
+[facet_wrap(~island)]{style="color:purple"}
+
+```{r, echo=F, warning=F, message=F}
+ggplot(penguins) + aes(x = species, y = bill_depth_mm, fill = island) + geom_boxplot() + facet_wrap(~island)
+```
+
+## Multivariate Scatterplot by facet
+
+[ggplot(penguins)]{style="color:orange"} + 
+
+[aes(x = bill_length_mm, y = bill_depth_mm)]{style="color:green"} + 
+
+[geom_point()]{style="color:blue"} + [facet_wrap(\~species)]{style="color:purple"}
 
 ```{r, echo=F, warning=F, message=F}
 ggplot(penguins) + 
@@ -190,111 +628,90 @@ ggplot(penguins) +
 ```
 
 
-## Bar plots
-
-Made for categorical data. Bar plots automatically count each group for you, so you only need to provide one variable (axis).
-
-[ggplot(penguins)]{style="color:orange"} + [aes(x = species)]{style="color:green"} + [geom_bar()]{style="color:blue"}
-
-```{r, echo=F, warning=F, message=F}
-ggplot(penguins) + aes(x = species) + geom_bar()
-```
-
-## Bar plots, providing both axis
-
-Alternatively, if you want to provide both axis for plotting:
-
-```{r}
-penguins_grouped = group_by(penguins, species)
-penguins_summary = summarise(penguins_grouped, n_species = n())
-penguins_summary
-```
-
-```{r}
-ggplot(penguins_summary) + aes(x = species, y = n_species) + geom_bar(stat = "identity")
-```
-
-
-## Histogram with a plot theme
-
-[ggplot(penguins)]{style="color:orange"} + [aes(x = bill_length_mm)]{style="color:green"} + [geom_histogram()]{style="color:blue"} + [theme_bw()]{style="color:purple"}
-
-```{r, echo=F, warning=F, message=F}
-ggplot(penguins) + aes(x = bill_length_mm) + geom_histogram() + theme_bw()
-```
-
-## Histogram with options
-
-[ggplot(penguins)]{style="color:orange"} + [aes(x = bill_length_mm)]{style="color:green"} + [geom_histogram(binwidth = 5)]{style="color:blue"}
-
-```{r, echo=F, warning=F, message=F}
-ggplot(penguins) + aes(x = bill_length_mm) + geom_histogram(binwidth = 5) 
-```
-
-
-## Boxplot
-
-[ggplot(penguins)]{style="color:orange"} + [aes(x = species, y = bill_depth_mm)]{style="color:green"} + [geom_boxplot()]{style="color:blue"}
-
-```{r, echo=F, warning=F, message=F}
-ggplot(penguins) + aes(x = species, y = bill_depth_mm) + geom_boxplot()
-```
-
-## Grouped Boxplot
-
-[ggplot(penguins)]{style="color:orange"} + [aes(x = species, y = bill_depth_mm, color = island)]{style="color:green"} + [geom_boxplot()]{style="color:blue"}
-
-```{r, echo=F, warning=F, message=F}
-ggplot(penguins) + aes(x = species, y = bill_depth_mm, fill = island) + geom_boxplot()
-```
-
 ## Some additional options
 
-[ggplot(data = penguins)]{style="color:orange"} + [aes(x = bill_length_mm, y = bill_depth_mm, color = species)]{style="color:green"} + [geom_point()]{style="color:blue"} + [labs(x = "Bill Length", y = "Bill Depth", title = "Comparison of penguin bill length and bill depth across species") + scale_x_continuous(limits = c(30, 60))]{style="color:purple"}
+::::{.columns}
+:::{.column width="35%"}
+[ggplot(data = penguins)]{style="color:orange"} + 
 
+[aes(x = bill_length_mm, y = bill_depth_mm, color = species)]{style="color:green"} + 
+
+[geom_point()]{style="color:blue"} + 
+
+[labs(x = "Bill Length", y = "Bill Depth", title = "Comparison of penguin bill length and bill depth across species")]{style="color:purple"}
+:::
+:::{.column width="65%"}
 ```{r, echo=F, warning=F, message=F}
 ggplot(data = penguins) + geom_point(mapping = aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + labs(x = "Bill Length", y = "Bill Depth", title = "Comparison of penguin bill length and bill depth across species") + scale_x_continuous(limits = c(30, 60))
 ```
+:::
+::::
 
-## Summary of options
+# Layering Geometries
 
-[data]{style="color:orange"}
+## Adding on to a plot
 
-\
-[geom_point]{style="color:blue"}: [x, y, color, shape]{style="color:green"}
+::::{.columns}
+:::{.column width="35%"}
+- You can layer multiple compatible geometries
+  - Must share aesthetics
+  - Added one layer at a time
+:::
+:::{.column width="65%"}
+```{r warning=FALSE}
+ggplot(penguins) +
+  aes(x=bill_depth_mm,
+      y=bill_length_mm,
+      color=species) +
+  geom_density_2d() +           # 2d density geom
+  geom_point()
+```
 
-[geom_line]{style="color:blue"}: [x, y, group, color]{style="color:green"}
+:::
+::::
 
-[geom_histogram]{style="color:blue"}: [x, y, fill]{style="color:green"}
+## geom_tile() + geom_text() = heatmap
 
-[geom_bar]{style="color:blue"}: [x, fill]{style="color:green"}
+Why is this heatmap missing boxes? Hint: look at penguin counts.
 
-[geom_boxplot]{style="color:blue"}: [x, y, fill, color]{style="color:green"}
+Look at the `count()` function and see if there's an argument we can set to fill in the missing boxes.
 
-\
-[facet_wrap]{style="color:purple"}
+```{r}
+penguin_counts <- count(x=penguins, species, island)
+penguin_counts
+```
 
-\
-[labs]{style="color:purple"}
+## Missing Values - How to Fix?
 
-[scale_x_continuous]{style="color:purple"}
+A task in your exercise for the week!
 
-[scale_y_continuous]{style="color:purple"}
+```{r}
+ggplot(penguin_counts) +
+  aes(x=species, 
+      y=island, 
+      fill=n) +
+  geom_tile() +
+  geom_text(aes(label=n), 
+            color="white")
+```
 
-[scale_x_discrete]{style="color:purple"}
-
-[scale_y_discrete]{style="color:purple"}
 
 ## `esquisse` as a helper
 
 Consider the `esquisse` package to help generate your ggplot code via drag and drop.
 
-```         
+```r         
 library(esquisse)
-
 esquisser(penguins)
 ```
 
-## R Graphics Cookbook
+## For More Practice:
 
-An excellent resource: https://r-graphics.org/
+- [R-Bootcamp Chapter 1](https://r-bootcamp.netlify.app/chapter1.html)
+- [R-Bootcamp Chapter 2](https://r-bootcamp.netlify.app/chapter2.html)
+- [Better Plots](https://hutchdatascience.org/better_plots)
+
+## Community Session Next Week
+
+- Optional
+- Suggest a Topic and Vote in Google Doc
