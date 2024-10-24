@@ -1,0 +1,132 @@
+---
+title: "Week 4 Exercises"
+format: 
+  live-html:
+    df-print: paged
+    smaller: true
+    scrollable: true
+    echo: true
+    embed-resources: true
+webr:
+    render-df: paged-table
+    drop:
+      engine: webr
+      button: true
+      webr:
+        - dplyr
+resources:
+  - data
+---
+
+{{< include ./_extensions/r-wasm/live/_knitr.qmd >}}
+
+```{webr}
+#| edit: false
+#| message: false
+#| warning: false
+library(dplyr)
+load("data/CCLE.RData")
+```
+
+## Working with `filter()`
+
+Try `filter()` out with some different criteria:
+
+- OncotreeLineage == "Lung"
+- Sex == "Male"
+- SourceType == "Commercial"
+- Age > 50
+
+
+```{webr}
+filter(metadata, ---------)
+```
+
+Try Chaining two criteria with `&` (AND):
+
+```{webr}
+and_metadata <- filter(metadata, ---------- &
+         ------------)
+```
+
+Try chaining two criteria with `|` (OR):
+
+```{webr}
+or_metadata <- filter(metadata, ---------- |
+         ------------)
+or_metadta
+```
+
+## Working with `select()`
+
+Try out `select()`, selecting two or three of these columns:
+
+- CellLineName
+- StrippedCellLineName
+- OncotreePrimaryDisease
+- Sex
+
+```{webr}
+selected_metadata <- select(metadata, -----, -----, ----)
+selected_metadata
+```
+
+Try out renaming a column with `select()`. For example, you can rename `CellLineName` as `CellLine` by using it as a *named* argument. Note that we are using the `=` (assignment operator) rather than `==` (the equivalence operator):
+
+```{webr}
+select(metadata, CellLine=CellLineName, ModelID, AgeCategory)
+
+```
+
+Try renaming a column:
+
+```{webr}
+select(metadata, ----=-----, ------, ------)
+```
+
+
+## Working with Pipes
+
+Try converting one of your `select()` or `filter()` statements into a pipeline.
+
+For example,
+
+```r
+filter(metadata, OncotreeLineage == "Lung")
+```
+
+will become
+
+```r
+metadata |>
+  filter(OncotreeLineage == "Lung")
+```
+
+```{webr}
+metadata |>
+  ---------------
+```
+
+Try building a three-step pipe. Make sure your last function doesn't end with `|>`. If it helps, pipe the output of each step into `head()`. 
+
+Here are the column names, in case you need them:
+
+```{webr}
+colnames(metadata)
+```
+
+```{webr}
+metadata |>
+  filter(---- == ----) |>
+  filter(---- < -----) |>
+  select(---- = -----, -----, -----) 
+```
+
+Try changing the steps in your pipeline around. Does it change the final result, or can it even be calculated? (Hint: `select()` before `filter()` can eliminate columns you might need in your `filter()` statement):
+
+```{webr}
+metadata |>
+  filter(---- == ----) |>
+  filter(---- < -----) |>
+  select(---- = -----, -----, -----) 
+```
